@@ -1,0 +1,45 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ renova ]
+  pull_request:
+    branches: [ renova ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ubuntu
+    services:
+      database:
+        image: mysql:5.7
+        env: 
+          MYSQL_DATABASE: ragnarok
+          MYSQL_USER: ragnarok
+          MYSQL_PASSWORD: ragnarok
+          MYSQL_ROOT_PASSWORD: secret
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+        ports:
+          - 3306
+    steps:
+      - uses: actions/checkout@v2
+      - name: Verify MySQL Connection
+        run: |
+          apt-get update
+          apt-get install -y mysql-client
+          mysql --host mydb -uroot -ppassword -e "SHOW DATABASES"
+      - name: Configure
+        run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
+      - name: Copy NPCs
+        run: ./tools/ci/npc.sh
+      - name: Clean
+        run: make clean
+      - name: Make
+        run: make all
+      - name: Start MySQL
+        run: sudo /etc/init.d/mysql start
+      - name: Test Servers
+        run: |
+          ./login-server --run-once
+          ./char-server --run-once
+          ./map-server --run-once
