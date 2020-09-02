@@ -27,7 +27,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y mysql-client
-          mysql --host mydb -uroot -ppassword -e "SHOW DATABASES"
+          mysql --host database -uroot -psecret -e "SHOW DATABASES"
       - name: Configure
         run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
       - name: Copy NPCs
