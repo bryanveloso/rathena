@@ -13,8 +13,10 @@ jobs:
       database:
         image: mysql:5.7
         env: 
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+          MYSQL_USER: ragnarok
+          MYSQL_PASSWORD: ragnarok
           MYSQL_DATABASE: ragnarok
-          MYSQL_ROOT_PASSWORD: password
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
         ports:
           - 3306
@@ -26,6 +28,8 @@ jobs:
           find: "database"
           replace: "127.0.0.1"
           include:  "conf/import-tmpl/inter_conf.txt"
+      - name: Start MySQL
+        run: sudo /etc/init.d/mysql start
       - name: Configure rAthena
         run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
       - name: Copy NPCs
@@ -34,11 +38,6 @@ jobs:
         run: make clean
       - name: Make rAthena
         run: make all
-      - name: Configure MySQL
-        run: | 
-          sudo /etc/init.d/mysql start
-          mysql -h 127.0.0.1 --port ${{ job.services.database.ports['3306'] }} -u root -ppassword -e "CREATE USER 'rangarok'@'%' IDENTIFIED WITH mysql_native_password BY 'ragnarok';";
-          mysql -h 127.0.0.1 --port ${{ job.services.database.ports['3306'] }} -u root -ppassword -e "USE ragnarok; GRANT ALL PRIVILEGES ON ragnarok.* TO 'ragnarok'@'%';";
       - name: Test Servers
         run: |
           ./login-server --run-once
