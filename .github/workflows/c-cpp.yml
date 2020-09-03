@@ -24,6 +24,12 @@ jobs:
           find: "database"
           replace: "127.0.0.1"
           include:  "conf/import-tmpl/inter_conf.txt"
+      - name: Find and replace character server IP
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "char_ip: char"
+          replace: "char_ip: 127.0.0.1"
+          include: "conf/import-tmpl/map_conf.txt"
       - name: Start MySQL
         run: | 
           sudo systemctl start mysql.service
@@ -43,6 +49,4 @@ jobs:
       - name: Test Character Server
         run: ./char-server --run-once
       - name: Test Map Server
-        run: |
-          ./map-server --run-once
-          echo $?
+        run: ./map-server --run-once
