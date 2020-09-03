@@ -9,17 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      database:
-        image: mysql:5.7
-        env: 
-          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-          MYSQL_USER: ragnarok
-          MYSQL_PASSWORD: ragnarok
-          MYSQL_DATABASE: ragnarok
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
-        ports:
-          - 3306
     steps:
       - uses: actions/checkout@v2
       - name: Find and replace database host
@@ -28,10 +17,13 @@ jobs:
           find: "database"
           replace: "127.0.0.1"
           include:  "conf/import-tmpl/inter_conf.txt"
-      - name: Start MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -h database --port ${{ job.services.database.ports['3306'] }} -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS ragnarok;'
+      - name: Setup MySQL
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql root password: password
+          mysql database: ragnarok
+          mysql user: ragnarok
+          mysql password: ragnarok
       - name: Configure rAthena
         run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
       - name: Copy NPCs
