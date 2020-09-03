@@ -19,15 +19,15 @@ jobs:
           include:  "conf/import-tmpl/inter_conf.txt"
       - name: Start MySQL
         run: sudo systemctl start mysql.service
-      - name: Configure MySQL
-        run: |
-          mysql -h 127.0.0.1 --port 3306 -u root -proot -e "CREATE USER 'ragnarok'@'%' IDENTIFIED WITH mysql_native_password BY 'ragnarok';";
-          mysql -h 127.0.0.1 --port 3306 -u root -proot -e "CREATE DATABASE ragnarok; USE ragnarok; GRANT ALL PRIVILEGES ON ragnarok.* TO 'ragnarok'@'%';";
-      - name: Create Tables
+      - name: Import SQL
         run: ./tools/ci/sql.sh
         env:
           DB_ROOT: root
           DB_NAME: ragnarok
+      - name: Create User
+        run: |
+          mysql -h 127.0.0.1 --port 3306 -u root -proot -e "CREATE USER 'ragnarok'@'%' IDENTIFIED WITH mysql_native_password BY 'ragnarok';";
+          mysql -h 127.0.0.1 --port 3306 -u root -proot -e "USE ragnarok; GRANT ALL PRIVILEGES ON ragnarok.* TO 'ragnarok'@'%';";
       - name: Configure rAthena
         run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
       - name: Copy NPCs
