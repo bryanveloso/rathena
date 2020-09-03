@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ubuntu
     services:
       database:
         image: mysql:5.7
@@ -23,7 +22,13 @@ jobs:
           - 3306
     steps:
       - uses: actions/checkout@v2
-      - name: Verify MySQL Connection
+      - name: Find and replace database host
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "database"
+          replace: "127.0.0.1"
+          include:  "conf/import-tmpl/inter_conf.txt"
+      - name: Verify MySQL connection
         run: |
           apt-get update
           apt-get install -y mysql-client
