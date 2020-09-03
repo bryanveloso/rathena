@@ -43,4 +43,6 @@ jobs:
       - name: Test Character Server
         run: ./char-server --run-once
       - name: Test Map Server
-        run: ./map-server --run-once
+        run: |
+          ./map-server --run-once
+          echo $?
