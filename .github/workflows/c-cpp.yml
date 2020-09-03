@@ -26,7 +26,7 @@ jobs:
         uses: jacobtomlinson/gha-find-replace@master
         with:
           find: "database"
-          replace: "127.0.0.1"
+          replace: "localhost"
           include:  "conf/import-tmpl/inter_conf.txt"
       - name: Start MySQL
         run: sudo /etc/init.d/mysql start
