@@ -25,6 +25,9 @@ jobs:
           mysql -h 127.0.0.1 --port 3306 -u root -proot -e "CREATE DATABASE ragnarok; USE ragnarok; GRANT ALL PRIVILEGES ON ragnarok.* TO 'ragnarok'@'%';";
       - name: Create Tables
         run: ./tools/ci/sql.sh
+        env:
+          DB_ROOT: root
+          DB_NAME: ragnarok
       - name: Configure rAthena
         run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
       - name: Copy NPCs
