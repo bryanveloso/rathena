@@ -27,7 +27,7 @@ jobs:
       - name: Start MySQL
         run: | 
           sudo systemctl start mysql.service
-          mysql -h 127.0.0.1 -port 3306 -u root -proot -e "SET PASSWORD FOR root@localhost=PASSWORD('');"
+          mysql -h 127.0.0.1 --port 3306 -u root -proot -e "SET PASSWORD FOR root@localhost=PASSWORD('');"
       - name: Import SQL
         run: ./tools/ci/sql.sh
       - name: Configure rAthena
