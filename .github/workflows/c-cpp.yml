@@ -28,11 +28,6 @@ jobs:
           find: "database"
           replace: "127.0.0.1"
           include:  "conf/import-tmpl/inter_conf.txt"
-      - name: Verify MySQL connection
-        run: |
-          apt-get update
-          apt-get install -y mysql-client
-          mysql --host database -uroot -psecret -e "SHOW DATABASES"
       - name: Configure
         run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
       - name: Copy NPCs
