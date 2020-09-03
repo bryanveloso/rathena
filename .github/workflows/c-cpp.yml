@@ -15,7 +15,7 @@ jobs:
         uses: jacobtomlinson/gha-find-replace@master
         with:
           find: "database"
-          replace: "127.0.0.1"
+          replace: "172.17.0.1"
           include:  "conf/import-tmpl/inter_conf.txt"
       - name: Setup MySQL
         uses: mirromutth/mysql-action@v1.1
