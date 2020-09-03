@@ -18,7 +18,7 @@ jobs:
           replace: "172.17.0.1"
           include:  "conf/import-tmpl/inter_conf.txt"
       - name: Setup MySQL
-        uses: mirromutth/mysql-action@v1.1
+        uses: haltuf/mysql-action@master
         with:
           mysql root password: password
           mysql database: ragnarok
