@@ -38,8 +38,9 @@ jobs:
         run: make clean
       - name: Make rAthena
         run: make all
-      - name: Test Servers
-        run: |
-          ./login-server --run-once
-          ./char-server --run-once
-          ./map-server --run-once
+      - name: Test Login Server
+        run: ./login-server --run-once
+      - name: Test Character Server
+        run: ./char-server --run-once
+      - name: Test Map Server
+        run: ./map-server --run-once
