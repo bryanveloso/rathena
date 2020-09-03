@@ -26,10 +26,12 @@ jobs:
         uses: jacobtomlinson/gha-find-replace@master
         with:
           find: "database"
-          replace: "localhost"
+          replace: "127.0.0.1"
           include:  "conf/import-tmpl/inter_conf.txt"
       - name: Start MySQL
-        run: sudo /etc/init.d/mysql start
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -h 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS ragnarok;'
       - name: Configure rAthena
         run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
       - name: Copy NPCs
