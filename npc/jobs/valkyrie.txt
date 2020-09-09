@@ -1,17 +1,17 @@
-//===== rAthena Script ======================================= 
+//===== rAthena Script =======================================
 //= Valkyrie Realm
 //===== By: ==================================================
-//= Nana, fixes by Poki
+//= Nana, fixes by Poki, edits by Avalonstar
 //= finished, optimized and tested by Lupus
 //= L0ne_W0lf
-//===== Current Version: ===================================== 
-//= 3.1
-//===== Compatible With: ===================================== 
+//===== Current Version: =====================================
+//= 3.2
+//===== Compatible With: =====================================
 //= rAthena Project
-//===== Description: ========================================= 
+//===== Description: =========================================
 //= [Official Conversion]
 //= Quest to become a Tranceded Class. (Advanced/Rebirthed)
-//===== Additional Comments: ================================= 
+//===== Additional Comments: =================================
 //= 1.1 Made all into functions,additional checks,quest skills,now Valhallana can return you back. She also makes reborn process only when you got no Zeny/items (as in kRO) [Lupus]
 //= 1.2 now alternative classes can use their 1-1 job NPC to become Advanced 1st Class [Lupus]
 //= 1.4 added Baby Class support [Lupus]
@@ -38,7 +38,8 @@
 //= 2.9b Fixed Verdandi typo, fixed resetting vars [Lupus]
 //= 3.0 Added quest log commands. [L0ne_W0lf]
 //= 3.1 Added Izlude Renewal coordinates.
-//============================================================ 
+//= 3.2 Unofficial version of iRO's VIP bypass of zeny fee.
+//============================================================
 
 valkyrie,48,86,4	script	Valkyrie#	811,{
 	if (ADVJOB != 0 || Upper == 1) {
@@ -226,23 +227,33 @@ yuno_in02,88,164,5	script	Metheus Sylphe#Library	742,{
 			mes "[Metheus Sylphe]";
 			mes "Also, in order to preserve the original 'Book of Ymir,' we have decided to accept donations from people who wish to read the copy we have provided.";
 			next;
-			mes "[Metheus Sylphe]";
-			mes "The suggested";
-			mes "donation amount is";
-			mes "1,285,000 zeny.";
-			next;
-			if (select("Donate.:Cancel.") == 1) {
-				if (Zeny >= 1285000) {
-					set Zeny, Zeny-1285000;
-					set valkyrie_Q,1;
+			if (VIP_SCRIPT) {
+				mes "[Metheus Sylphe]";
+				mes "But... given your status with the Academy, there is no need for you to pay that.";
+				next;
+				set valkyrie_Q,1;
+				mes "[Metheus Sylphe]";
+				mes "Thank you for your continued support of the academy. You may now go in and read the book.";
+				close;
+			} else {
+				mes "[Metheus Sylphe]";
+				mes "The suggested";
+				mes "donation amount is";
+				mes "1,285,000 zeny.";
+				next;
+				if (select("Donate.:Cancel.") == 1) {
+					if (Zeny >= 1285000) {
+						set Zeny, Zeny-1285000;
+						set valkyrie_Q,1;
+						mes "[Metheus Sylphe]";
+						mes "Thank you, your donation will be used for a good cause. You may";
+						mes "now go in and read the book.";
+						close;
+					}
 					mes "[Metheus Sylphe]";
-					mes "Thank you, your donation will be used for a good cause. You may";
-					mes "now go in and read the book.";
+					mes "Unfortunately, you don't seem to possess enough zeny at the moment. Please check your funds and come back again.";
 					close;
 				}
-				mes "[Metheus Sylphe]";
-				mes "Unfortunately, you don't seem to possess enough zeny at the moment. Please check your funds and come back again.";
-				close;
 			}
 			mes "[Metheus Sylphe]";
 			mes "Take your time, and";
@@ -250,7 +261,7 @@ yuno_in02,88,164,5	script	Metheus Sylphe#Library	742,{
 			close;
 		}
 		mes "[Metheus Sylphe]";
-		mes "Once again, thank you for your generous donation. Feel free to read a carbon copy of the 'Book of Ymir' at your leisure.";
+		mes "Once again, thank you. Feel free to read a carbon copy of the 'Book of Ymir' at your leisure.";
 		close;
 	}
 	mes "[Metheus Sylphe]";
@@ -397,7 +408,7 @@ S_WarpChar:
 }
 
 // Warps
-//============================================================ 
+//============================================================
 valkyrie,48,73,0	warp	valk01#1	1,1,valkyrie,48,64
 valkyrie,48,66,0	warp	valk01#2	1,1,valkyrie,48,75
 
