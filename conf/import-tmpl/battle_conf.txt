@@ -62,3 +62,4 @@ pet_rename: yes
 max_aspd: 193
 max_third_aspd: 196
 max_extended_aspd: 196
+vip_disp_rate: no
