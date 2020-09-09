@@ -31,13 +31,13 @@ jobs:
           replace: "char_ip: 127.0.0.1"
           include: "conf/import-tmpl/map_conf.txt"
       - name: Start MySQL
-        run: | 
+        run: |
           sudo systemctl start mysql.service
           mysql -h 127.0.0.1 --port 3306 -u root -proot -e "SET PASSWORD FOR root@localhost=PASSWORD('');"
       - name: Import SQL
         run: ./tools/ci/sql.sh
       - name: Configure rAthena
-        run: ./configure --enable-prere=no --enable-vip=no --enable-buildbot=yes
+        run: ./configure --enable-prere=no --enable-vip=yes --enable-buildbot=yes
       - name: Copy NPCs
         run: ./tools/ci/npc.sh
       - name: Clean
