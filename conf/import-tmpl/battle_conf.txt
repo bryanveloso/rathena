@@ -38,3 +38,8 @@ guild_exp_limit: 99
 // misc.conf
 day_duration: 7200000
 night_duration: 7200000
+
+// monster.conf
+show_mob_info: 6
+zeny_from_mobs: yes
+achievement_mob_share: yes
