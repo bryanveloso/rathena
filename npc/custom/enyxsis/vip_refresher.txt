@@ -1,0 +1,14 @@
+//===== rAthena Script =======================================
+//= VIP Refresher
+//===== Description: =========================================
+//= Refreshes VIP status on login.
+//===== Additional Comments: =================================
+//= 1.0 First Version
+//============================================================
+
+-	script	LOGIN	-1,{
+	OnPCLoginEvent:
+		if (vip_status(VIP_STATUS_REMAINING) < 1440 * 60) {
+			vip_time(30 * 1440)
+		}
+}
