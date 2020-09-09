@@ -9,6 +9,6 @@
 -	script	LOGIN	-1,{
 	OnPCLoginEvent:
 		if (vip_status(VIP_STATUS_REMAINING) < 1440 * 60) {
-			vip_time(30 * 1440)
+			vip_time(30 * 1440);
 		}
 }
