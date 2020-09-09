@@ -227,7 +227,7 @@ yuno_in02,88,164,5	script	Metheus Sylphe#Library	742,{
 			mes "[Metheus Sylphe]";
 			mes "Also, in order to preserve the original 'Book of Ymir,' we have decided to accept donations from people who wish to read the copy we have provided.";
 			next;
-			if (VIP_SCRIPT) {
+			if (VIP_SCRIPT && vip_status(VIP_STATUS_ACTIVE)) {
 				mes "[Metheus Sylphe]";
 				mes "But... given your status with the Academy, there is no need for you to pay that.";
 				next;
