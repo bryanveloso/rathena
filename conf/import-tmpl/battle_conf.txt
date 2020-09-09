@@ -34,3 +34,7 @@ feature.warp_suggestions: on
 
 // guild.conf
 guild_exp_limit: 99
+
+// misc.conf
+day_duration: 7200000
+night_duration: 7200000
