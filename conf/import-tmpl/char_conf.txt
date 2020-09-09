@@ -1,7 +1,7 @@
-userid: renova
+userid: enyxsis
 passwd: RwpLUppCAgMvvfpe
-server_name: Renova
-wisp_server_name: Renova
+server_name: Enyxsis
+wisp_server_name: Enyxsis
 login_ip: login
 char_ip: 64.225.91.36
 autosave_time: 60

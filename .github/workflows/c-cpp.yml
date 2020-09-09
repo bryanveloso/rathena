@@ -2,9 +2,9 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ renova ]
+    branches: [ enyxsis ]
   pull_request:
-    branches: [ renova ]
+    branches: [ enyxsis ]
 
 env:
   DB_ROOT: root

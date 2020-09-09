@@ -1,4 +1,4 @@
-userid: renova
+userid: enyxsis
 passwd: RwpLUppCAgMvvfpe
 char_ip: char
 map_ip: 64.225.91.36
