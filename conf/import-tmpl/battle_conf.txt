@@ -43,3 +43,8 @@ night_duration: 7200000
 show_mob_info: 6
 zeny_from_mobs: yes
 achievement_mob_share: yes
+
+// player.conf
+max_aspd: 193
+max_third_aspd: 196
+max_extended_aspd: 196
