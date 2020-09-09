@@ -1,10 +1,10 @@
 // client.conf
 min_hair_style: 0
-max_hair_style: 100
+max_hair_style: 99
 min_hair_color: 0
-max_hair_color: 127
+max_hair_color: 131
 min_cloth_color: 0
-max_cloth_color: 700
+max_cloth_color: 699
 min_body_style: 0
 max_body_style: 1
 display_version: no
