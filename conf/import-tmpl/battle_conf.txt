@@ -31,3 +31,6 @@ death_penalty_type: 0
 // feature.conf
 feature.atcommand_suggestions: on
 feature.warp_suggestions: on
+
+// guild.conf
+guild_exp_limit: 99
