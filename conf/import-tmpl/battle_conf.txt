@@ -36,6 +36,8 @@ multi_level_up: yes
 mvp_exp_rate: 1000
 quest_exp_rate: 1000
 death_penalty_type: 0
+disp_experience: true
+disp_zeny: true
 
 // feature.conf
 feature.atcommand_suggestions: on
