@@ -57,9 +57,9 @@ OnInit:
 	.list$[LOOK_CLOTHES_COLOR] = getbattleflag("min_cloth_color") + "-" + getbattleflag("max_cloth_color");
 	.list$[LOOK_BODY2] = getbattleflag("min_body_style") + "-" + getbattleflag("max_body_style");
 
-	.list$[Job_Summoner + LOOK_HAIR] = getbattleflag("min_hair_style") + "-" + getbattleflag("max_hair_style");
+	.list$[Job_Summoner + LOOK_HAIR] = "0-5";
 	.list$[Job_Summoner + LOOK_HAIR_COLOR] = getbattleflag("min_hair_color") + "-" + getbattleflag("max_hair_color");
-	.list$[Job_Summoner + LOOK_CLOTHES_COLOR] = getbattleflag("min_cloth_color") + "-1";
+	.list$[Job_Summoner + LOOK_CLOTHES_COLOR] = "0-1";
 
 	freeloop true;
 	setarray .look[0], LOOK_HAIR, LOOK_HAIR_COLOR, LOOK_CLOTHES_COLOR, LOOK_BODY2,
