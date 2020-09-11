@@ -50,7 +50,7 @@ guild_exp_limit: 99
 homunculus_friendly_rate: 1000
 hom_rename: yes
 homunculus_autoloot: yes
-homunculus_exp_gain: 50
+homunculus_exp_gain: 500
 
 // misc.conf
 day_duration: 7200000
