@@ -46,6 +46,12 @@ feature.warp_suggestions: on
 // guild.conf
 guild_exp_limit: 99
 
+// homunc.conf
+homunculus_friendly_rate: 1000
+hom_rename: yes
+homunculus_autoloot: yes
+homunculus_exp_gain: 50
+
 // misc.conf
 day_duration: 7200000
 night_duration: 7200000
