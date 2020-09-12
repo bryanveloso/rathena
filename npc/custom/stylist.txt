@@ -15,7 +15,7 @@
 //= now the styles display number no longer shown to other players
 //============================================================
 
-prontera,142,172,3	script	Stylist#custom_stylist	1_F_ORIENT_03,{
+prontera,142,172,5	script	Stylist#custom_stylist	1_F_ORIENT_03,{
 	.@choose = select( "Change Hair Style", "Change Hair Color", "Change Clothing Colors", ( !(eaclass() & EAJL_THIRD) || BaseJob == Job_SuperNovice )? "": "Change Body Style" ) -1;
 	.@lookpart = .@part = .look[.@choose];
 	if ( BaseClass == Job_Summoner )
