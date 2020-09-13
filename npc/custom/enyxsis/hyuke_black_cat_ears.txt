@@ -1,0 +1,154 @@
+//===== rAthena Script =======================================
+//= Tsunaru's Hyuke's Black Cat Ears Quest
+//===== By: ==================================================
+//= TheTsunaru
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project SVN 3422+
+//===== Description: =========================================
+//= Quest for the Hyuke's Black Cat Ears
+//===== Additional Comments: =================================
+//= 1.0 First Version
+//============================================================
+
+morocc,99,110,3	script	Cat Ear Enthusiast	497,{
+	if (hyuke_quest == 0) {
+		mes "[^FF0000Cat Ear Enthusiast^000000]";
+		mes "Oh man, aren't cat ears just the greatest? So soft and warm and flexible. Human ears just don't begin to compare.";
+		next;
+		mes "[^FF0000Cat Ear Enthusiast^000000]";
+		mes "You know, I actually hear tell of someone in Payon that can make a pair of ^00388BBlack Cat Ears^000000 for humans to wear.";
+		next;
+		mes "[^FF0000Cat Ear Enthusiast^000000]";
+		mes "The next time you find yourself there, do you think you could pick up a pair for me to see? I'll make it worth your while.";
+		switch(select("I suppose I could:..You already have cat ears though")) {
+		next;
+		case 1:
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Excellent. I shall wait here for your return then.";
+			set hyuke_quest,1;
+			close;
+		case 2:
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Huh? Oh, but these aren't artificial though, they're my actual ears. It's a long story involving an overly enthusiastic Creator.";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "So what do you say? Will you help me out?";
+			switch(select("Yeah, alright:Sorry, I don't think I have the time")) {
+			next;
+			case 1:
+				mes "[^FF0000Cat Ear Enthusiast^000000]";
+				mes "Excellent. I shall wait here for your return then.";
+				set hyuke_quest,1;
+				close;
+			case 2:
+				mes "[^FF0000Cat Ear Enthusiast^000000]";
+				mes "Oh.. alright then. No big deal, like you said, I already have my own cat ears. I just thought I'd help you appreciate them more too..";
+				set hyuke_quest,2;
+				close;
+			}
+		}
+	}
+
+	if (hyuke_quest == 2) {
+		mes "[^FF0000Cat Ear Enthusiast^000000]";
+		mes "Ahh, I see you've returned. I knew you couldn't resist the charm of cat ears for very long.";
+		next;
+		mes "[^FF0000Cat Ear Enthusiast^000000]";
+		mes "I'll assume that you coming back means you're interested in my offer. I won't take no for an answer any more, so hurry up and go get those cat ears.";
+		set hyuke_quest,1;
+		close;
+	}
+
+	if (hyuke_quest == 1) {
+		if (countitem(5057) > 0) {
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "AHHH. You have them, I can feel it. Why else would you be back here, right?";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Let me see, let me see, let me see.";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Why.. these are.. okay I guess. Kind of boring though, if you ask me. They don't really do much, do they?";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "I bet I could modify them for you. At least make it so they can move around or something. But I'll need you to pick up some materials for me first.";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Lets see.. I think";
+			mes "1 ^00388BGold^000000";
+			mes "10 ^00388BRough Wind^000000";
+			mes "and these ^00388BBlack Cat Ears^000000";
+			mes "will do the trick nicely.";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "What's that? You're wondering how ^00388BGold^000000 and ^00388BRough Wind^000000 will help me make your cat ears move?";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "That's easy. The ^00388BGold^000000 will be used to create the circuitry, and we'll use the electrical energy stored in the ^00388BRough Wind^000000 as a power source.";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "You didn't honestly think I'd send you out for these materials for my OWN benefit, did you?";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Well anyway, get to it. Chop chop. The sooner you return with these materials, the sooner I can grace you with even better cat ears.";
+			set hyuke_quest,3;
+			close;
+		}
+
+		else {
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Man, I can't wait for you to come back with those cat ears. I can't even imagine why you're here talking to me instead of going out to get them.";
+			close;
+		}
+	}
+
+	if (hyuke_quest == 3) {
+		if (countitem(5057) > 0 && countitem(969) > 0 && countitem(996) > 9) {
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Ahh, I see you've returned once more, and with all the materials I needed as well. Fantastic. Stand back and watch a master at work.";
+			next;
+			delitem 5057,1; //Black Cat Ears
+			delitem 969,1; //Gold
+			delitem 996,10; //Rough Wind
+			getitem 5360,1; //Hyuke's Black Cat Ears
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Taa-daaaaah!! One pair of ^00388BWickebine's Black Cat Ears^000000, just as promised.";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "I actually have no idea why they're called that, or who Wickebine is though.. but no matter. Go forth into the world, and share the glory of the cat ears with everyone!";
+			set hyuke_quest,4;
+			close;
+		}
+
+		else {
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Hmmmm.. you must have forgotten what I need. No worries, I know the thought of getting these ears must be driving you crazy and it's hard to focus on anything else.";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "I need";
+			mes "1 ^00388BGold^000000";
+			mes "10 ^00388BRough Wind^000000";
+			mes "and those ^00388BBlack Cat Ears^000000.";
+			next;
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Now please, go out and procure these for me so together we can spread the truth of glorious cat ears to the world.";
+			close;
+		}
+	}
+
+	if (hyuke_quest == 4) {
+		if (getequipid(EQI_HEAD_TOP) == 5360) {
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Yeeeesssss. Look at those glorious ears. I've seen few things in my life more beautiful than those.";
+			close;
+		}
+
+		else {
+			mes "[^FF0000Cat Ear Enthusiast^000000]";
+			mes "Hey, what gives? How come you're not wearing the ears I made for you?";
+			close;
+		}
+	}
+}
