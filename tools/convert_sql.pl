@@ -337,7 +337,7 @@ CREATE TABLE IF NOT EXISTS `$db` (
 DROP TABLE IF EXISTS `$db`;
 CREATE TABLE `$db` (
   `ID` mediumint(9) unsigned NOT NULL default '0',
-  `Sprite` text NOT NULL,
+  `Sprite` varchar(24) NOT NULL,
   `kName` text NOT NULL,
   `iName` text NOT NULL,
   `LV` tinyint(6) unsigned NOT NULL default '0',
@@ -379,7 +379,7 @@ CREATE TABLE `$db` (
   `Drop2per` smallint(9) unsigned NOT NULL default '0',
   `Drop3id` int(10) unsigned NOT NULL default '0',
   `Drop3per` smallint(9) unsigned NOT NULL default '0',
-  `Drop4id` int(10)) unsigned NOT NULL default '0',
+  `Drop4id` int(10) unsigned NOT NULL default '0',
   `Drop4per` smallint(9) unsigned NOT NULL default '0',
   `Drop5id` int(10) unsigned NOT NULL default '0',
   `Drop5per` smallint(9) unsigned NOT NULL default '0',
@@ -393,7 +393,8 @@ CREATE TABLE `$db` (
   `Drop9per` smallint(9) unsigned NOT NULL default '0',
   `DropCardid` int(10) unsigned NOT NULL default '0',
   `DropCardper` smallint(9) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`ID`)
+  PRIMARY KEY  (`ID`),
+  UNIQUE KEY (`Sprite`)
 ) ENGINE=MyISAM;
 ";
 	}
