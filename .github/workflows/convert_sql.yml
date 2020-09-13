@@ -1,0 +1,25 @@
+name: Convert TXT to SQL
+on:
+  push:
+    branches: [ enyxsis ]
+  pull_request:
+    branches: [ enyxsis ]
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shogo82148/actions-setup-perl@v1.6.2
+      - name: Update SQL Files
+        run: |
+          ./tools/convert_sql.pl --i=../db/re/item_db.txt --o=../sql-files/item_db_re.sql --t=re --m=item --table=item_db_re
+          ./tools/convert_sql.pl --i=../db/re/mob_db.txt --o=../sql-files/mob_db_re.sql --t=re --m=mob --table=mob_db_re
+          ./tools/convert_sql.pl --i=../db/re/mob_skill_db.txt --o=../sql-files/mob_skill_db_re.sql --t=re --m=mob_skill --table=mob_skill_db_re
+      - uses: EndBug/add-and-commit@v4
+        with:
+          add: 'sql-files'
+          message: 'Synchronize SQL files.'
+          author_email: actions@github.com
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
