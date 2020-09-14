@@ -10,8 +10,7 @@ start_items_doram: 1681,1,2:2301,1,16:7060,100,0
 start_zeny: 7500
 guild_exp_rate: 1000
 char_name_letters: abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-
-char_del_delay: 0
-
-//
+char_del_option: 2
+char_del_delay: 60
 pincode_enabled: no
 pincode_force: no
