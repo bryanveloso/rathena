@@ -5,7 +5,7 @@ ENV PACKETVER=20200401
 WORKDIR /server
 
 RUN apk update \
-  && apk add --no-cache git make linux-headers gcc g++ mariadb-dev zlib-dev pcre-dev libressl-dev pcre libstdc++ nano dos2unix mysql-client bind-tools
+  && apk add --no-cache netcat-openbsd make linux-headers gcc g++ mariadb-dev zlib-dev pcre-dev libressl-dev pcre libstdc++ nano dos2unix mysql-client bind-tools
 
 COPY . .
 
