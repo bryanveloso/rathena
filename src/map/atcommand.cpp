@@ -1150,6 +1150,51 @@ ACMD_FUNC(hide)
 	return 0;
 }
 
+ACMD_FUNC(resetcooltime)
+{
+	nullpo_retr(-1, sd);
+
+	for( size_t i = 0; i < ARRAYLENGTH( sd->scd ); i++ ){
+		if( sd->scd[i] != nullptr ) {
+			sprintf( atcmd_output, msg_txt( sd, 1537 ), skill_db.find( sd->scd[i]->skill_id )->name ); // Found skill '%s', unblocking...
+			clif_displaymessage( sd->fd, atcmd_output );
+
+			if (battle_config.display_status_timers)
+				clif_skill_cooldown( *sd, sd->scd[i]->skill_id, 0 );
+
+			delete_timer(sd->scd[i]->timer, skill_blockpc_end);
+			aFree(sd->scd[i]);
+			sd->scd[i] = nullptr;
+		}
+	}
+
+	if( sd->hd != nullptr && hom_is_active( sd->hd ) ){
+		for( const uint16& skill_id : sd->hd->blockskill ){
+			sprintf( atcmd_output, msg_txt( sd, 1537 ), skill_db.find( skill_id )->name ); // Found skill '%s', unblocking...
+			clif_displaymessage( sd->fd, atcmd_output );
+
+			if (battle_config.display_status_timers)
+				clif_skill_cooldown( *sd, skill_id, 0 );
+		}
+
+		sd->hd->blockskill.clear();
+	}
+
+	if( sd->md != nullptr ){
+		for( const uint16& skill_id : sd->md->blockskill ){
+			sprintf( atcmd_output, msg_txt( sd, 1537 ), skill_db.find( skill_id )->name ); // Found skill '%s', unblocking...
+			clif_displaymessage( sd->fd, atcmd_output );
+
+			if (battle_config.display_status_timers)
+				clif_skill_cooldown( *sd, skill_id, 0 );
+		}
+
+		sd->md->blockskill.clear();
+	}
+
+	return 0;
+}
+
 /*==========================================
  * Changes a character's class
  *------------------------------------------*/
@@ -1241,7 +1286,7 @@ ACMD_FUNC(alive)
 		clif_displaymessage(fd, msg_txt(sd,667)); // You're not dead.
 		return -1;
 	}
-	clif_skill_nodamage(&sd->bl,&sd->bl,ALL_RESURRECTION,4,1);
+	clif_skill_nodamage(&sd->bl,sd->bl,ALL_RESURRECTION,4);
 	clif_displaymessage(fd, msg_txt(sd,16)); // You've been revived! It's a miracle!
 	return 0;
 }
@@ -1314,7 +1359,7 @@ ACMD_FUNC(heal)
 
 	if ( hp < 0 && sp <= 0 ) {
 		status_damage(nullptr, &sd->bl, -hp, -sp, 0, 0, 0);
-		clif_damage(&sd->bl,&sd->bl, gettick(), 0, 0, -hp, 0, DMG_ENDURE, 0, false);
+		clif_damage(sd->bl,sd->bl, gettick(), 0, 0, -hp, 0, DMG_ENDURE, 0, false);
 		clif_displaymessage(fd, msg_txt(sd,156)); // HP or/and SP modified.
 		return 0;
 	}
@@ -1325,7 +1370,7 @@ ACMD_FUNC(heal)
 			status_heal(&sd->bl, hp, 0, 0);
 		else {
 			status_damage(nullptr, &sd->bl, -hp, 0, 0, 0, 0);
-			clif_damage(&sd->bl,&sd->bl, gettick(), 0, 0, -hp, 0, DMG_ENDURE, 0, false);
+			clif_damage(sd->bl,sd->bl, gettick(), 0, 0, -hp, 0, DMG_ENDURE, 0, false);
 		}
 	}
 
@@ -1594,7 +1639,7 @@ ACMD_FUNC(baselevelup)
 			clif_displaymessage(fd, msg_txt(sd,47)); // Base level can't go any higher.
 			return -1;
 		} // End Addition
-		if ((unsigned int)level > pc_maxbaselv(sd) || (unsigned int)level > pc_maxbaselv(sd) - sd->status.base_level) // fix positive overflow
+		if ((uint32)level > pc_maxbaselv(sd) || (uint32)level > pc_maxbaselv(sd) - sd->status.base_level) // fix positive overflow
 			level = pc_maxbaselv(sd) - sd->status.base_level;
 		for (i = 0; i < level; i++)
 		{
@@ -1603,7 +1648,7 @@ ACMD_FUNC(baselevelup)
 		}
 		sd->status.status_point += status_point;
 		sd->status.trait_point += trait_point;
-		sd->status.base_level += (unsigned int)level;
+		sd->status.base_level += (uint32)level;
 		status_calc_pc(sd, SCO_FORCE);
 		status_percent_heal(&sd->bl, 100, 100);
 		clif_misceffect( sd->bl, NOTIFYEFFECT_BASE_LEVEL_UP );
@@ -1618,7 +1663,7 @@ ACMD_FUNC(baselevelup)
 			return -1;
 		}
 		level*=-1;
-		if ((unsigned int)level >= sd->status.base_level)
+		if ((uint32)level >= sd->status.base_level)
 			level = sd->status.base_level-1;
 		for (i = 0; i > -level; i--)
 		{
@@ -1635,7 +1680,7 @@ ACMD_FUNC(baselevelup)
 			sd->status.trait_point = 0;
 		else
 			sd->status.trait_point -= trait_point;
-		sd->status.base_level -= (unsigned int)level;
+		sd->status.base_level -= (uint32)level;
 		clif_displaymessage(fd, msg_txt(sd,22)); // Base level lowered.
 		status_calc_pc(sd, SCO_FORCE);
 		level*=-1;
@@ -1675,9 +1720,9 @@ ACMD_FUNC(joblevelup)
 			clif_displaymessage(fd, msg_txt(sd,23)); // Job level can't go any higher.
 			return -1;
 		}
-		if ((unsigned int)level > pc_maxjoblv(sd) || (unsigned int)level > pc_maxjoblv(sd) - sd->status.job_level) // fix positive overflow
+		if ((uint32)level > pc_maxjoblv(sd) || (uint32)level > pc_maxjoblv(sd) - sd->status.job_level) // fix positive overflow
 			level = pc_maxjoblv(sd) - sd->status.job_level;
-		sd->status.job_level += (unsigned int)level;
+		sd->status.job_level += (uint32)level;
 		sd->status.skill_point += level;
 		clif_misceffect( sd->bl, NOTIFYEFFECT_JOB_LEVEL_UP );
 		for (uint32 i = sd->status.job_level - level; i <= sd->status.job_level; i++)
@@ -1689,9 +1734,9 @@ ACMD_FUNC(joblevelup)
 			return -1;
 		}
 		level *=-1;
-		if ((unsigned int)level >= sd->status.job_level) // fix negative overflow
+		if ((uint32)level >= sd->status.job_level) // fix negative overflow
 			level = sd->status.job_level-1;
-		sd->status.job_level -= (unsigned int)level;
+		sd->status.job_level -= (uint32)level;
 		if (sd->status.skill_point < level)
 			pc_resetskill(sd,0);	//Reset skills since we need to subtract more points.
 		if (sd->status.skill_point < level)
@@ -2213,7 +2258,7 @@ ACMD_FUNC(monster)
 	int count;
 	int i, range;
 	short mx, my;
-	unsigned int size;
+	uint32 size;
 	nullpo_retr(-1, sd);
 
 	memset(name, '\0', sizeof(name));
@@ -2663,7 +2708,7 @@ ACMD_FUNC(displaystatus)
 ACMD_FUNC(statuspoint)
 {
 	int point;
-	unsigned int new_status_point;
+	uint32 new_status_point;
 
 	if (!message || !*message || (point = atoi(message)) == 0) {
 		clif_displaymessage(fd, msg_txt(sd,1010)); // Please enter a number (usage: @stpoint <number of points>).
@@ -2672,7 +2717,7 @@ ACMD_FUNC(statuspoint)
 
 	if(point < 0)
 	{
-		if(sd->status.status_point < (unsigned int)(-point))
+		if(sd->status.status_point < (uint32)(-point))
 		{
 			new_status_point = 0;
 		}
@@ -2681,7 +2726,7 @@ ACMD_FUNC(statuspoint)
 			new_status_point = sd->status.status_point + point;
 		}
 	}
-	else if(UINT_MAX - sd->status.status_point < (unsigned int)point)
+	else if(UINT_MAX - sd->status.status_point < (uint32)point)
 	{
 		new_status_point = UINT_MAX;
 	}
@@ -2711,7 +2756,7 @@ ACMD_FUNC(statuspoint)
 ACMD_FUNC(traitpoint)
 {
 	int point;
-	unsigned int new_trait_point;
+	uint32 new_trait_point;
 
 	if (!message || !*message || (point = atoi(message)) == 0) {
 		clif_displaymessage(fd, msg_txt(sd, 820)); // Please enter a number (usage: @trpoint <number of points>).
@@ -2720,7 +2765,7 @@ ACMD_FUNC(traitpoint)
 
 	if (point < 0)
 	{
-		if (sd->status.trait_point < (unsigned int)(-point))
+		if (sd->status.trait_point < (uint32)(-point))
 		{
 			new_trait_point = 0;
 		}
@@ -2729,7 +2774,7 @@ ACMD_FUNC(traitpoint)
 			new_trait_point = sd->status.trait_point + point;
 		}
 	}
-	else if (UINT_MAX - sd->status.trait_point < (unsigned int)point)
+	else if (UINT_MAX - sd->status.trait_point < (uint32)point)
 	{
 		new_trait_point = UINT_MAX;
 	}
@@ -2760,7 +2805,7 @@ ACMD_FUNC(traitpoint)
 ACMD_FUNC(skillpoint)
 {
 	int point;
-	unsigned int new_skill_point;
+	uint32 new_skill_point;
 	nullpo_retr(-1, sd);
 
 	if (!message || !*message || (point = atoi(message)) == 0) {
@@ -2770,7 +2815,7 @@ ACMD_FUNC(skillpoint)
 
 	if(point < 0)
 	{
-		if(sd->status.skill_point < (unsigned int)(-point))
+		if(sd->status.skill_point < (uint32)(-point))
 		{
 			new_skill_point = 0;
 		}
@@ -2779,7 +2824,7 @@ ACMD_FUNC(skillpoint)
 			new_skill_point = sd->status.skill_point + point;
 		}
 	}
-	else if(UINT_MAX - sd->status.skill_point < (unsigned int)point)
+	else if(UINT_MAX - sd->status.skill_point < (uint32)point)
 	{
 		new_skill_point = UINT_MAX;
 	}
@@ -3549,7 +3594,7 @@ static void atcommand_raise_sub(map_session_data* sd) {
 
 	status_revive(&sd->bl, 100, 100);
 
-	clif_skill_nodamage(&sd->bl,&sd->bl,ALL_RESURRECTION,4,1);
+	clif_skill_nodamage(&sd->bl,sd->bl,ALL_RESURRECTION,4);
 	clif_displaymessage(sd->fd, msg_txt(sd,63)); // Mercy has been shown.
 }
 
@@ -3749,7 +3794,7 @@ ACMD_FUNC(lostskill)
 
 	sd->status.skill[sk_idx].lv = 0;
 	sd->status.skill[sk_idx].flag = SKILL_FLAG_PERMANENT;
-	clif_deleteskill(sd,skill_id);
+	clif_deleteskill(*sd,skill_id);
 	clif_displaymessage(fd, msg_txt(sd,71)); // You have forgotten the skill.
 
 	return 0;
@@ -3793,8 +3838,8 @@ ACMD_FUNC(soulball)
 	}
 
 	if (sd->soulball > 0)
-		pc_delsoulball(sd, sd->soulball, true);
-	sd->soulball = number;
+		pc_delsoulball( *sd, sd->soulball, true );
+	pc_addsoulball( *sd, number );
 	clif_soulball(sd);
 
 	return 0;
@@ -4332,6 +4377,9 @@ ACMD_FUNC(reload) {
 	}else if( strstr( command, "barterdb" ) || strncmp( message, "barterdb", 4 ) == 0 ){
 		barter_db.reload();
 		clif_displaymessage(fd, msg_txt(sd, 830)); // Barter database has been reloaded.
+	} else if (strstr(command, "logconf") || strncmp(message, "logconf", 3) == 0) {
+		log_config_read(LOG_CONF_NAME);
+		clif_displaymessage(fd, msg_txt(sd,1536)); // Log configuration has been reloaded.
 	}
 
 	return 0;
@@ -4342,7 +4390,7 @@ ACMD_FUNC(reload) {
  * Temporary - Permanent update in inter_athena.conf
  *------------------------------------------*/
 ACMD_FUNC(partysharelvl) {
-	unsigned int share_lvl;
+	uint32 share_lvl;
 
 	nullpo_retr(-1, sd);
 
@@ -4713,7 +4761,7 @@ ACMD_FUNC(mount_peco)
 
 	if( (sd->class_&MAPID_THIRDMASK) == MAPID_RUNE_KNIGHT && pc_checkskill(sd,RK_DRAGONTRAINING) > 0 ) {
 		if( !(sd->sc.option&OPTION_DRAGON) ) {
-			unsigned int option = OPTION_DRAGON1;
+			uint32 option = OPTION_DRAGON1;
 			if( message[0] ) {
 				int color = atoi(message);
 				option = ( color == 2 ? OPTION_DRAGON2 :
@@ -6251,7 +6299,6 @@ ACMD_FUNC(useskill)
  *------------------------------------------*/
 ACMD_FUNC(displayskill)
 {
-	struct status_data * status;
 	t_tick tick;
 	uint16 skill_id;
 	uint16 skill_lv = 1;
@@ -6264,14 +6311,15 @@ ACMD_FUNC(displayskill)
 		clif_displaymessage(fd, msg_txt(sd,825));// Effect Types: 0: All, 1: Damage, 2: Splash Dmg, 3: No Damage, 4: Ground
 		return -1;
 	}
-	status = status_get_status_data(&sd->bl);
+
+	status_data* status = status_get_status_data(sd->bl);
 	tick = gettick();
 	if (type == 0 || type == 1)
 		clif_skill_damage(&sd->bl, &sd->bl, tick, status->amotion, status->dmotion, 1, 1, skill_id, skill_lv, DMG_SINGLE);
 	if (type == 0 || type == 2)
 		clif_skill_damage(&sd->bl, &sd->bl, tick, status->amotion, status->dmotion, 1, 1, skill_id, skill_lv, DMG_SPLASH);
 	if (type == 0 || type == 3)
-		clif_skill_nodamage(&sd->bl, &sd->bl, skill_id, skill_lv, 1);
+		clif_skill_nodamage(&sd->bl, sd->bl, skill_id, skill_lv);
 	if (type == 0 || type == 4)
 		clif_skill_poseffect(&sd->bl, skill_id, skill_lv, sd->bl.x, sd->bl.y, tick);
 	return 0;
@@ -7839,7 +7887,7 @@ ACMD_FUNC(mobinfo)
 		// drops
 		clif_displaymessage(fd, msg_txt(sd,1245)); //  Drops:
 		strcpy(atcmd_output, " ");
-		unsigned int j = 0;
+		uint32 j = 0;
 		int drop_modifier = 100;
 #ifdef RENEWAL_DROP
 		if( battle_config.atcommand_mobinfo_type ){
@@ -8183,7 +8231,6 @@ ACMD_FUNC(homtalk)
 ACMD_FUNC(hominfo)
 {
 	struct homun_data *hd;
-	struct status_data *status;
 	nullpo_retr(-1, sd);
 
 	if ( !hom_is_active(sd->hd) ) {
@@ -8192,7 +8239,7 @@ ACMD_FUNC(hominfo)
 	}
 
 	hd = sd->hd;
-	status = status_get_status_data(&hd->bl);
+	status_data* status = status_get_status_data(hd->bl);
 	clif_displaymessage(fd, msg_txt(sd,1261)); // Homunculus stats:
 
 	snprintf(atcmd_output, sizeof(atcmd_output) ,msg_txt(sd,1262), // HP: %d/%d - SP: %d/%d
@@ -8938,7 +8985,7 @@ ACMD_FUNC(invite)
 
 ACMD_FUNC(duel)
 {
-	unsigned int maxpl = 0;
+	uint32 maxpl = 0;
 
 	if(sd->duel_group > 0) {
 		duel_showinfo(sd->duel_group, sd);
@@ -9463,13 +9510,13 @@ ACMD_FUNC(itemlist)
 
 		if( it->card[0] == CARD0_PET ) { // pet egg
 			if (it->card[3]&1)
-				StringBuf_Printf(&buf, msg_txt(sd,1348), (unsigned int)MakeDWord(it->card[1], it->card[2])); //  -> (pet egg, pet id: %u, named)
+				StringBuf_Printf(&buf, msg_txt(sd,1348), (uint32)MakeDWord(it->card[1], it->card[2])); //  -> (pet egg, pet id: %u, named)
 			else
-				StringBuf_Printf(&buf, msg_txt(sd,1349), (unsigned int)MakeDWord(it->card[1], it->card[2])); //  -> (pet egg, pet id: %u, unnamed)
+				StringBuf_Printf(&buf, msg_txt(sd,1349), (uint32)MakeDWord(it->card[1], it->card[2])); //  -> (pet egg, pet id: %u, unnamed)
 		} else if(it->card[0] == CARD0_FORGE) { // forged item
-			StringBuf_Printf(&buf, msg_txt(sd,1350), (unsigned int)MakeDWord(it->card[2], it->card[3]), it->card[1]>>8, it->card[1]&0x0f); //  -> (crafted item, creator id: %u, star crumbs %d, element %d)
+			StringBuf_Printf(&buf, msg_txt(sd,1350), (uint32)MakeDWord(it->card[2], it->card[3]), it->card[1]>>8, it->card[1]&0x0f); //  -> (crafted item, creator id: %u, star crumbs %d, element %d)
 		} else if(it->card[0] == CARD0_CREATE) { // created item
-			StringBuf_Printf(&buf, msg_txt(sd,1351), (unsigned int)MakeDWord(it->card[2], it->card[3])); //  -> (produced item, creator id: %u)
+			StringBuf_Printf(&buf, msg_txt(sd,1351), (uint32)MakeDWord(it->card[2], it->card[3])); //  -> (produced item, creator id: %u)
 		} else { // normal item
 			int counter2 = 0;
 
@@ -11019,6 +11066,7 @@ void atcommand_basecommands(void) {
 		ACMD_DEF(guildstorage),
 		ACMD_DEF(option),
 		ACMD_DEF(hide), // + /hide
+		ACMD_DEF(resetcooltime), // + /resetcooltime
 		ACMD_DEFR(jobchange, ATCMD_NOCONSOLE),
 		ACMD_DEF(kill),
 		ACMD_DEF(alive),

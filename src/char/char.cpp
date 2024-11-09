@@ -65,7 +65,7 @@ static char* msg_table[CHAR_MAX_MSG]; // Login Server messages_conf
 // check for exit signal
 // 0 is saving complete
 // other is char_id
-unsigned int save_flag = 0;
+uint32 save_flag = 0;
 
 // Advanced subnet check [LuzZza]
 struct s_subnet {
@@ -504,7 +504,7 @@ int char_mmo_char_tosql(uint32 char_id, struct mmo_charstatus* p){
 		{
 			if( diff )
 				StringBuf_AppendStr(&buf, ",");// not the first hotkey
-			StringBuf_Printf(&buf, "('%d','%u','%u','%u','%u')", char_id, (unsigned int)i, (unsigned int)p->hotkeys[i].type, p->hotkeys[i].id , (unsigned int)p->hotkeys[i].lv);
+			StringBuf_Printf(&buf, "('%d','%u','%u','%u','%u')", char_id, (uint32)i, (uint32)p->hotkeys[i].type, p->hotkeys[i].id , (uint32)p->hotkeys[i].lv);
 			diff = 1;
 		}
 	}
@@ -2431,7 +2431,7 @@ bool char_checkdb(void){
 		return false;
 	}
 	//checking guild_expulsion_db
-	if( SQL_ERROR == Sql_Query(sql_handle, "SELECT  `guild_id`,`account_id`,`name`,`mes` FROM `%s` LIMIT 1;", schema_config.guild_expulsion_db) ){
+	if( SQL_ERROR == Sql_Query(sql_handle, "SELECT  `guild_id`,`account_id`,`name`,`mes`,`char_id` FROM `%s` LIMIT 1;", schema_config.guild_expulsion_db) ){
 		Sql_ShowDebug(sql_handle);
 		return false;
 	}
@@ -2843,6 +2843,7 @@ void char_config_split_startpoint( char* w1_value, char* w2_value, struct s_poin
 	size_t fields_length = 3 + 1;
 
 	(*count) = 0; // Reset to begin reading
+	memset(start_point, 0, sizeof(struct s_point_str) * MAX_STARTPOINT);
 
 	fields = (char **)aMalloc(fields_length * sizeof(char *));
 	if (fields == nullptr)
@@ -2881,6 +2882,8 @@ void char_config_split_startitem(char *w1_value, char *w2_value, struct startite
 	char *lineitem, **fields;
 	int i = 0;
 	size_t fields_length = 3 + 1;
+
+	memset(start_items, 0, sizeof(struct startitem) * MAX_STARTITEM);
 
 	fields = (char **)aMalloc(fields_length * sizeof(char *));
 	if (fields == nullptr)
@@ -3184,10 +3187,6 @@ void CharacterServer::handle_shutdown(){
 
 bool CharacterServer::initialize( int argc, char *argv[] ){
 	// Init default value
-	CHAR_CONF_NAME =   "conf/char_athena.conf";
-	LAN_CONF_NAME =    "conf/subnet_athena.conf";
-	SQL_CONF_NAME =    "conf/inter_athena.conf";
-	MSG_CONF_NAME_EN = "conf/msg_conf/char_msg.conf";
 	safestrncpy(console_log_filepath, "./log/char-msg_log.log", sizeof(console_log_filepath));
 
 	cli_get_options(argc,argv);
@@ -3197,7 +3196,7 @@ bool CharacterServer::initialize( int argc, char *argv[] ){
 	char_config_adjust();
 	char_lan_config_read(LAN_CONF_NAME);
 	char_set_default_sql();
-	char_sql_config_read(SQL_CONF_NAME);
+	char_sql_config_read(INTER_CONF_NAME);
 	msg_config_read(MSG_CONF_NAME_EN);
 
 #if !defined(BUILDBOT)
@@ -3208,7 +3207,7 @@ bool CharacterServer::initialize( int argc, char *argv[] ){
 	}
 #endif
 
-	inter_init_sql((argc > 2) ? argv[2] : SQL_CONF_NAME); // inter server configuration
+	inter_init_sql(INTER_CONF_NAME); // inter server configuration
 
 	char_mmo_sql_init();
 	char_read_fame_list(); //Read fame lists.
